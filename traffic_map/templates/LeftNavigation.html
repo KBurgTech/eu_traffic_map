@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-auto">
+            <i class="fas fa-road fa-2x"></i>
+        </div>
+        <div class="col">
+            <h1>EU Traffic Map</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onclick="refreshOnClick()">Refresh</button>
+            <script>
+                function refreshOnClick() { //Do the refresh manually for now
+                    $.get("/load", function (data) {
+                        $(".result").html(data);
+                        alert("Load was performed.");
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</div>
