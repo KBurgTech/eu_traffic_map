@@ -1,9 +1,14 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.template import loader
 
-# Create your views here.
 from traffic_map.ui.views import mapView
 
 
 def main_view(request):
     return mapView.map_view_main(request)
+
+
+def index_view(request):
+    template = loader.get_template('Base.html')
+    context = {'TestVar': "Loool"}
+    return HttpResponse(template.render(context, request))

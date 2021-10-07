@@ -1,10 +1,10 @@
-from django.db.models import Max
-from django.db.models.functions import Coalesce
-from django.http import HttpResponse
-import folium
-import re, string;
+import re;
 
+import folium
+from django.db.models import Max
+from django.http import HttpResponse
 from django.template import loader
+
 from traffic_map.models import Roadwork
 
 pattern = re.compile('[\W_]+')
@@ -15,7 +15,7 @@ def add_roadwork(m):
     for work in Roadwork.objects.filter(refresh_cycle=max_rating):
         folium.Marker(
             location=[work.loc_latitude, work.loc_longitude],
-            popup=pattern.sub('', work.description), #TODO REMOVE WEIRD FIX
+            popup=pattern.sub('', work.description),  # TODO REMOVE WEIRD FIX
             icon=folium.Icon(icon='road', color='orange')
         ).add_to(m)
 
@@ -37,6 +37,6 @@ def map_view_main(request):
 
     add_roadwork(m)
     m = figure._repr_html_()
-    template = loader.get_template('Index.html')
+    template = loader.get_template('MapView.html')
     context = {'map': m}
     return HttpResponse(template.render(context, request))
