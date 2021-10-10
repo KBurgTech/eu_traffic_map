@@ -13,6 +13,7 @@ class LiveItem(models.Model):
     refresh_cycle = models.IntegerField()
     loc_latitude = models.FloatField()
     loc_longitude = models.FloatField()
+    title = models.CharField(max_length=128)
     type = models.CharField(max_length=16)
     data = models.CharField(max_length=2048)
 

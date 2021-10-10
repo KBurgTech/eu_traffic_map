@@ -23,3 +23,5 @@ def run_import():
 def import_actual(id):
     ger = GermanyImporter(id)
     ger.load_roadwork()
+    ger.load_accidents()
+    ger.load_liveitems()

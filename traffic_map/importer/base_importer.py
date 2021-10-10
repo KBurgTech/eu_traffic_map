@@ -2,6 +2,9 @@ class BaseImporter:
 
     CycleId = -1
 
+    def load_all(self):
+        pass
+
     def load_roadwork(self):
         pass
 
