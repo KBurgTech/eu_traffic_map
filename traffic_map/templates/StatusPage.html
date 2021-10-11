@@ -1,0 +1,52 @@
+{% extends "Base.html" %}
+{% block content %}
+    <div style="margin: 50px">
+        <script>
+            function refreshOnClick() { //Do the refresh manually for now
+                $.get("/load", function (data) {
+                    $(".result").html(data);
+                    location.reload();
+                });
+            }
+        </script>
+        <div class="card text-center">
+            <div class="card-header">
+                <a type="button" class="btn btn-primary" href="/">Home</a>
+                <button type="button" class="btn btn-primary" onclick="refreshOnClick()">Refresh Data Set</button>
+                <button type="button" class="btn btn-primary" onclick="location.reload()">Refresh Status</button>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Refresh Cycle #</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Run time</th>
+                        <th>Finished</th>
+                        <th>Success</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cycle in cycles %}
+                        <tr>
+                            <td>{{ cycle.id }}</td>
+                            <td>{{ cycle.start_time }}</td>
+                            <td>{{ cycle.end_time }}</td>
+                            <td>{{ cycle.get_runtime }}</td>
+                            <td>{{ cycle.finished }}</td>
+                            {% if cycle.status == 0 %}
+                                <td><i class="fas fa-spinner rotateAnim" style="color: blue"></i></td>
+                            {% elif cycle.status == 1 %}
+                                <td><i class="fas fa-check-circle" style="color: green"></i></td>
+                            {% elif cycle.status == -1 %}
+                                <td><i class="far fa-times-circle" style="color: red"></i></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

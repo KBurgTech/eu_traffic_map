@@ -9,17 +9,6 @@
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary" onclick="refreshOnClick()">Refresh Data Set</button>
-            <script>
-                function refreshOnClick() { //Do the refresh manually for now
-                    $.get("/load", function (data) {
-                        $(".result").html(data);
-                        alert("Load was performed.");
-                    });
-                }
-            </script>
-        </div>
-        <div class="col">
             <button type="button" class="btn btn-primary" onclick="reloadMap()">Reload Map</button>
         </div>
     </div>

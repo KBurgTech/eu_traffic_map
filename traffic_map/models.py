@@ -1,3 +1,6 @@
+import datetime
+
+import pytz
 from django.db import models
 
 
@@ -7,6 +10,12 @@ class RefreshCycle(models.Model):
     finished = models.BooleanField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True)
+    status = models.IntegerField(default=0)
+
+    def get_runtime(self):
+        if self.end_time is None:
+            return datetime.datetime.now().replace(tzinfo=pytz.UTC) - self.start_time
+        return self.end_time - self.start_time
 
 
 class LiveItem(models.Model):

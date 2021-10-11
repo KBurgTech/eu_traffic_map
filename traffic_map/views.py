@@ -9,6 +9,6 @@ def main_view(request):
 
 
 def index_view(request):
-    template = loader.get_template('Base.html')
+    template = loader.get_template('Index.html')
     context = {'TestVar': "Loool"}
     return HttpResponse(template.render(context, request))

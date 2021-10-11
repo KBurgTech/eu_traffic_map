@@ -70,6 +70,9 @@
     let shouldLoadAgain = false
 
     function reloadMap() {
+        if($('#map_container').length === 0)
+            return;
+
         console.log("Reloading map")
         if (loadRunning) {
             shouldLoadAgain = true
@@ -100,19 +103,8 @@
 </script>
 {% csrf_token %}
 <div class="mainContent">
-    <div class="split settingsView">
-        {% include "LeftNavigation.html" %}
-    </div>
-    <div id="map_container" class="split mapView">
-
-    </div>
-    <div id="map_container_loading" class="split mapView">
-        <div>
-            <h1>Fetching Map...</h1>
-            <i class="fas fa-globe-europe fa-10x rotateAnim"></i>
-        </div>
-    </div>
-
+{% block content %}
+{% endblock content %}
 </div>
 </body>
 </html>

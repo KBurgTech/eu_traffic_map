@@ -12,12 +12,18 @@ def run_import():
     cycle.start_time = datetime.datetime.now()
     cycle.finished = False
     cycle.save()
-
-    import_actual(cycle.id)
-
-    cycle.finished = True
-    cycle.end_time = datetime.datetime.now()
-    cycle.save()
+    try:
+        import_actual(cycle.id)
+        cycle.finished = True
+        cycle.end_time = datetime.datetime.now()
+        cycle.status = 1
+        cycle.save()
+    except:
+        import_actual(cycle.id)
+        cycle.finished = False
+        cycle.end_time = datetime.datetime.now()
+        cycle.status = -1
+        cycle.save()
 
 
 def import_actual(id):
