@@ -1,6 +1,7 @@
 import datetime
 
 from traffic_map.importer.ger.germany_importer import GermanyImporter
+from traffic_map.importer.nl.nl_importer import NetherlandsImporter
 from traffic_map.models import RefreshCycle
 
 
@@ -18,7 +19,7 @@ def run_import():
         cycle.end_time = datetime.datetime.now()
         cycle.status = 1
         cycle.save()
-    except:
+    except Exception as e:
         import_actual(cycle.id)
         cycle.finished = False
         cycle.end_time = datetime.datetime.now()
@@ -31,3 +32,6 @@ def import_actual(id):
     ger.load_roadwork()
     ger.load_accidents()
     ger.load_liveitems()
+
+    nl = NetherlandsImporter(id)
+    nl.load_accidents()
