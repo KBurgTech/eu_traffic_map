@@ -1,4 +1,41 @@
 <div class="container">
+    <script>
+        function onUpdateFilter(sender) {
+            console.log(sender)
+            if (sender.id === "accidentCheckbox") {
+                if ($('#accidentCheckbox')[0].checked) {
+                    loadAccidents()
+                } else {
+                    for (marker of accidentMarker) {
+                        getMapObject().removeLayer(marker)
+                    }
+                    accidentMarker = []
+                }
+            }
+
+            if (sender.id === "roadworksCheckbox") {
+                if ($('#roadworksCheckbox')[0].checked) {
+                    loadRoadworks()
+                } else {
+                    for (marker of roadworkMarker) {
+                        getMapObject().removeLayer(marker)
+                    }
+                    roadworkMarker = []
+                }
+            }
+
+            if (sender.id === "liveItemsCheckbox") {
+                if ($('#liveItemsCheckbox')[0].checked) {
+                    loadLiveItems()
+                } else {
+                    for (marker of liveitemMarker) {
+                        getMapObject().removeLayer(marker)
+                    }
+                    liveitemMarker = []
+                }
+            }
+        }
+    </script>
     <div class="row">
         <div class="col-md-auto">
             <i class="fas fa-road fa-2x"></i>
@@ -9,9 +46,32 @@
     </div>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary" onclick="reloadMap()">Reload Map</button>
-            <button type="button" class="btn btn-primary" onclick="loadRoadworks()()">Test</button>
-
+            <h3>Filters</h3>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-auto">
+            <input id="accidentCheckbox" type="checkbox" onclick="onUpdateFilter(this)">
+        </div>
+        <div class="col">
+            <p>Show Accidents</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-auto">
+            <input id="roadworksCheckbox" type="checkbox" onclick="onUpdateFilter(this)">
+        </div>
+        <div class="col">
+            <p>Show Roadworks</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-auto">
+            <input id="liveItemsCheckbox" type="checkbox" onclick="onUpdateFilter(this)">
+        </div>
+        <div class="col">
+            <p>Show Live Items</p>
+        </div>
+    </div>
+
 </div>

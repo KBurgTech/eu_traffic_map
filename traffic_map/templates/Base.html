@@ -147,10 +147,10 @@
     }
 
     function loadLiveItems() {
-        for (marker of roadworkMarker) {
+        for (marker of liveitemMarker) {
             getMapObject().removeLayer(marker)
         }
-        roadworkMarker = []
+        liveitemMarker = []
 
         $.ajax({
             type: 'GET',
@@ -159,7 +159,7 @@
             dataType: "json",
             success: function (response) {
                 for (const item of response) {
-                    roadworkMarker.push(addMarker([item.fields.loc_latitude, item.fields.loc_longitude], "camera", "blue", "<div><h4>" + item.fields.title + "</h4><iframe src=\""+ item.fields.data +"\"></iframe></div>"))
+                    liveitemMarker.push(addMarker([item.fields.loc_latitude, item.fields.loc_longitude], "camera", "blue", "<div><h4>" + item.fields.title + "</h4><iframe src=\""+ item.fields.data +"\"></iframe></div>"))
                 }
                 console.log(response)
             },
