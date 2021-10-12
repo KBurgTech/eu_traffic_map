@@ -69,42 +69,118 @@
     let loadRunning = false
     let shouldLoadAgain = false
 
-    function reloadMap() {
-        if($('#map_container').length === 0)
-            return;
+    let accidentMarker = []
+    let roadworkMarker = []
+    let liveitemMarker = []
 
-        console.log("Reloading map")
-        if (loadRunning) {
-            shouldLoadAgain = true
-            return
+    function getMapObject() {
+        return $("#map_container").find("iframe")[0].contentWindow.mapsPlaceholder[0]
+    }
+
+    function getLeaflet() {
+        return $("#map_container").find("iframe")[0].contentWindow.L
+    }
+
+    function addMarker(coord, icon, iconColor, popupContent) {
+        var map = getMapObject()
+        var L = getLeaflet()
+
+        var marker = L.marker(coord, {
+            icon: L.AwesomeMarkers.icon({
+                icon: icon,
+                markerColor: iconColor
+            })
+        }).addTo(map);
+        marker.bindPopup(popupContent)
+        return marker
+    }
+
+
+    function loadAccidents() {
+        for (marker of accidentMarker) {
+            getMapObject().removeLayer(marker)
         }
-        $('#map_container_loading').removeClass("hidden")
+        accidentMarker = []
+
         $.ajax({
             type: 'GET',
             headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
-            url: "/api/map/",
+            url: "/api/accidents/",
+            dataType: "json",
             success: function (response) {
+                for (const accident of response) {
+                    accidentMarker.push(addMarker([accident.fields.loc_latitude, accident.fields.loc_longitude], "info-sign", "red", accident.fields.title))
+                }
                 console.log(response)
-                $('#map_container').html(response)
-                $('#map_container_loading').addClass("hidden")
             },
             error: function (response) {
-                console.log(response)
+                console.error(response)
             },
             complete: function () {
-                loadRunning = false
-                if (shouldLoadAgain) {
-                    shouldLoadAgain = false
-                    reloadMap()
-                }
             }
-        });
+        })
+    }
+
+    function loadRoadworks() {
+        for (marker of roadworkMarker) {
+            getMapObject().removeLayer(marker)
+        }
+        roadworkMarker = []
+
+        $.ajax({
+            type: 'GET',
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+            url: "/api/roadworks/",
+            dataType: "json",
+            success: function (response) {
+                for (const work of response) {
+                    roadworkMarker.push(addMarker([work.fields.loc_latitude, work.fields.loc_longitude], "road", "orange", work.fields.description))
+                }
+                console.log(response)
+            },
+            error: function (response) {
+                console.error(response)
+            },
+            complete: function () {
+            }
+        })
+    }
+
+    function loadLiveItems() {
+        for (marker of roadworkMarker) {
+            getMapObject().removeLayer(marker)
+        }
+        roadworkMarker = []
+
+        $.ajax({
+            type: 'GET',
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+            url: "/api/liveitems/",
+            dataType: "json",
+            success: function (response) {
+                for (const item of response) {
+                    roadworkMarker.push(addMarker([item.fields.loc_latitude, item.fields.loc_longitude], "camera", "blue", "<div><h4>" + item.fields.title + "</h4><iframe src=\""+ item.fields.data +"\"></iframe></div>"))
+                }
+                console.log(response)
+            },
+            error: function (response) {
+                console.error(response)
+            },
+            complete: function () {
+            }
+        })
+    }
+
+    function reloadMap() {
+        loadAccidents()
+        loadRoadworks()
+        loadLiveItems()
     }
 </script>
 {% csrf_token %}
 <div class="mainContent">
-{% block content %}
-{% endblock content %}
+    {% block content %}
+    {% endblock content %}
 </div>
 </body>
 </html>

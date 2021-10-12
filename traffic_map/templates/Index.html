@@ -4,12 +4,6 @@
         {% include "LeftNavigation.html" %}
     </div>
     <div id="map_container" class="split mapView">
-
-    </div>
-    <div id="map_container_loading" class="split mapView">
-        <div>
-            <h1>Fetching Map...</h1>
-            <i class="fas fa-globe-europe fa-10x rotateAnim"></i>
-        </div>
+        {{map|safe}}
     </div>
 {% endblock content %}

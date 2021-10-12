@@ -10,5 +10,5 @@ def main_view(request):
 
 def index_view(request):
     template = loader.get_template('Index.html')
-    context = {'TestVar': "Loool"}
+    context = {'map': mapView.map_view_main()}
     return HttpResponse(template.render(context, request))
