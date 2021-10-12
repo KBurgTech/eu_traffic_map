@@ -45,7 +45,7 @@ def map_view_main(request):
     m = folium.Map(
         width='100%', height='100%',
         location=[52.261350, 4.943192],
-        zoom_start=12,
+        zoom_start=0,
         tiles='OpenStreetMap'
     )
     m.add_to(figure)
