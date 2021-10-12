@@ -1,8 +1,9 @@
 import re
 
 import folium
-from branca.element import Element
+from branca.element import Element, CssLink, JavascriptLink
 from django.db.models import Max
+from folium import plugins
 
 from traffic_map.models import Roadwork, RoadAccident, LiveItem
 
@@ -48,6 +49,7 @@ def map_view_main():
         zoom_start=6,
         tiles='OpenStreetMap'
     )
+    cluster = plugins.MarkerCluster().add_to(m) #Inject MarkerCluster
     m.add_to(figure)
 
     js_intercept = '''

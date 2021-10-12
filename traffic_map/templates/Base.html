@@ -57,6 +57,23 @@
 
     }
 
+    .cluster {
+        width: 40px;
+        height: 40px;
+        background-color: greenyellow !important;
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
     @keyframes rotateAnimKey {
         50% {
             transform: rotate(180deg);
@@ -69,9 +86,9 @@
     let loadRunning = false
     let shouldLoadAgain = false
 
-    let accidentMarker = []
-    let roadworkMarker = []
-    let liveitemMarker = []
+    let accidentCluster = null
+    let roadworkCluster = null
+    let liveitemCluster = null
 
     function getMapObject() {
         return $("#map_container").find("iframe")[0].contentWindow.mapsPlaceholder[0]
@@ -81,26 +98,39 @@
         return $("#map_container").find("iframe")[0].contentWindow.L
     }
 
-    function addMarker(coord, icon, iconColor, popupContent) {
+    function addMarker(cluster, coord, icon, iconColor, popupContent) {
         var map = getMapObject()
         var L = getLeaflet()
+
 
         var marker = L.marker(coord, {
             icon: L.AwesomeMarkers.icon({
                 icon: icon,
                 markerColor: iconColor
             })
-        }).addTo(map);
+        }).addTo(cluster);
         marker.bindPopup(popupContent)
         return marker
     }
 
+    function createCluster(color) {
+        return getLeaflet().markerClusterGroup({
+            iconCreateFunction: function (cluster) {
+                return getLeaflet().divIcon({
+                    html: "<div style='display: flex; justify-content: center; align-items: center;width: 40px; height: 40px; background-color: " + color + "; border-radius: 50%'><b>" + cluster.getChildCount() + "</b></div>",
+                    className: "center",
+                    iconSize: getLeaflet().point(40, 40)
+                });
+            },
+        })
+    }
 
     function loadAccidents() {
-        for (marker of accidentMarker) {
-            getMapObject().removeLayer(marker)
+        if (accidentCluster == null) {
+            accidentCluster = createCluster("#d63e2a")
+            accidentCluster.addTo(getMapObject())
         }
-        accidentMarker = []
+        accidentCluster.clearLayers()
 
         $.ajax({
             type: 'GET',
@@ -109,7 +139,7 @@
             dataType: "json",
             success: function (response) {
                 for (const accident of response) {
-                    accidentMarker.push(addMarker([accident.fields.loc_latitude, accident.fields.loc_longitude], "info-sign", "red", accident.fields.title))
+                    addMarker(accidentCluster, [accident.fields.loc_latitude, accident.fields.loc_longitude], "info-sign", "red", accident.fields.title)
                 }
                 console.log(response)
             },
@@ -122,10 +152,11 @@
     }
 
     function loadRoadworks() {
-        for (marker of roadworkMarker) {
-            getMapObject().removeLayer(marker)
+        if (roadworkCluster == null) {
+            roadworkCluster = createCluster("#f69730")
+            roadworkCluster.addTo(getMapObject())
         }
-        roadworkMarker = []
+        roadworkCluster.clearLayers()
 
         $.ajax({
             type: 'GET',
@@ -134,7 +165,7 @@
             dataType: "json",
             success: function (response) {
                 for (const work of response) {
-                    roadworkMarker.push(addMarker([work.fields.loc_latitude, work.fields.loc_longitude], "road", "orange", work.fields.description))
+                    addMarker(roadworkCluster, [work.fields.loc_latitude, work.fields.loc_longitude], "road", "orange", work.fields.description)
                 }
                 console.log(response)
             },
@@ -147,10 +178,11 @@
     }
 
     function loadLiveItems() {
-        for (marker of liveitemMarker) {
-            getMapObject().removeLayer(marker)
+        if (liveitemCluster == null) {
+            liveitemCluster = createCluster("#38a9dc")
+            liveitemCluster.addTo(getMapObject())
         }
-        liveitemMarker = []
+        liveitemCluster.clearLayers()
 
         $.ajax({
             type: 'GET',
@@ -159,7 +191,7 @@
             dataType: "json",
             success: function (response) {
                 for (const item of response) {
-                    liveitemMarker.push(addMarker([item.fields.loc_latitude, item.fields.loc_longitude], "camera", "blue", "<div><h4>" + item.fields.title + "</h4><iframe src=\""+ item.fields.data +"\"></iframe></div>"))
+                    addMarker(liveitemCluster, [item.fields.loc_latitude, item.fields.loc_longitude], "camera", "blue", "<div><h4>" + item.fields.title + "</h4><iframe src=\"" + item.fields.data + "\"></iframe></div>")
                 }
                 console.log(response)
             },

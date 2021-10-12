@@ -6,10 +6,7 @@
                 if ($('#accidentCheckbox')[0].checked) {
                     loadAccidents()
                 } else {
-                    for (marker of accidentMarker) {
-                        getMapObject().removeLayer(marker)
-                    }
-                    accidentMarker = []
+                    accidentCluster.clearLayers()
                 }
             }
 
@@ -17,10 +14,7 @@
                 if ($('#roadworksCheckbox')[0].checked) {
                     loadRoadworks()
                 } else {
-                    for (marker of roadworkMarker) {
-                        getMapObject().removeLayer(marker)
-                    }
-                    roadworkMarker = []
+                    roadworkCluster.clearLayers()
                 }
             }
 
@@ -28,10 +22,7 @@
                 if ($('#liveItemsCheckbox')[0].checked) {
                     loadLiveItems()
                 } else {
-                    for (marker of liveitemMarker) {
-                        getMapObject().removeLayer(marker)
-                    }
-                    liveitemMarker = []
+                    liveitemCluster.clearLayers()
                 }
             }
         }
