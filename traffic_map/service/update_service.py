@@ -35,3 +35,4 @@ def import_actual(id):
 
     nl = NetherlandsImporter(id)
     nl.load_accidents()
+    nl.load_liveitems()

@@ -41,37 +41,9 @@
         right: 0;
     }
 
-    .hidden {
-        visibility: collapse;
-    }
-
-    #map_container_loading {
-        text-align: center;
-        align-content: center;
-        background-color: rgba(0, 0, 0, 0.3);
-        padding: 10%;
-    }
-
     .rotateAnim {
         animation: rotateAnimKey 5s infinite;
 
-    }
-
-    .cluster {
-        width: 40px;
-        height: 40px;
-        background-color: greenyellow !important;
-        text-align: center;
-        font-size: 24px;
-    }
-
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
     }
 
     @keyframes rotateAnimKey {
@@ -79,6 +51,87 @@
             transform: rotate(180deg);
         }
     }
+
+    input.toggleButton {
+        display: none;
+    }
+
+    .logoText {
+    }
+
+    .navMenuButton {
+        border-radius: 6px;
+        background: #1d3880;
+        box-shadow: 5px 5px 17px #0c1633,
+        -5px -5px 17px #2e5acd;
+        padding: 10px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .navMenuButton:hover {
+        border-radius: 6px;
+        background: #1d3880;
+        border-radius: 6px;
+        background: linear-gradient(145deg, #1a3273, #1f3c89);
+        box-shadow: 5px 5px 17px #0c1633,
+        -5px -5px 17px #2e5acd;
+        color: gray;
+    }
+
+    input.toggleButton + label {
+        padding: 5px 8px;
+        cursor: pointer;
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        border-radius: 6px;
+        background: #1d3880;
+        box-shadow: 5px 5px 17px #0c1633,
+        -5px -5px 17px #2e5acd;
+        color: gray;
+    }
+
+    .navMenuButton:hover {
+        background: #1d3880;
+        border-radius: 6px;
+        background: linear-gradient(145deg, #1a3273, #1f3c89);
+        box-shadow: 5px 5px 17px #0c1633,
+        -5px -5px 17px #2e5acd;
+        color: gray;
+    }
+
+
+    input.toggleButton:not(:checked) + label:hover {
+        border-radius: 6px;
+        background: linear-gradient(145deg, #1a3273, #1f3c89);
+        box-shadow: 5px 5px 17px #0c1633,
+        -5px -5px 17px #2e5acd;
+    }
+
+    input.toggleButton + label:active,
+    input.toggleButton:checked + label {
+        border-radius: 6px;
+        background: #1d3880;
+        box-shadow: inset 5px 5px 17px #0c1633,
+        inset -5px -5px 17px #2e5acd;
+    }
+
+    input.toggleButton + label.camera:active,
+    input.toggleButton:checked + label.camera {
+        color: #38a9dc;
+    }
+
+    input.toggleButton + label.roadwork:active,
+    input.toggleButton:checked + label.roadwork {
+        color: #f69730;
+    }
+
+    input.toggleButton + label.accident:active,
+    input.toggleButton:checked + label.accident {
+        color: #d63e2a;
+    }
+
 
 </style>
 <body onload="reloadMap()">
