@@ -20,7 +20,6 @@ def run_import():
         cycle.status = 1
         cycle.save()
     except Exception as e:
-        import_actual(cycle.id)
         cycle.finished = False
         cycle.end_time = datetime.datetime.now()
         cycle.status = -1
@@ -36,3 +35,4 @@ def import_actual(id):
     nl = NetherlandsImporter(id)
     nl.load_accidents()
     nl.load_liveitems()
+    nl.load_roadwork()

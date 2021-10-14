@@ -3,12 +3,42 @@ from traffic_map.importer.base_importer import BaseImporter
 # http://opendata.ndw.nu/
 from traffic_map.importer.nl.nl_accidents_importer import get_accidents, NL_XML_NAMESPACES
 from traffic_map.importer.nl.nl_liveitem_importer import get_liveitems, get_boards
-from traffic_map.models import RoadAccident, LiveItem
+from traffic_map.importer.nl.nl_roadwork_importer import get_roadworks, is_current
+from traffic_map.models import RoadAccident, LiveItem, Roadwork
 
 
 class NetherlandsImporter(BaseImporter):
     def __init__(self, cycleId):
         self.CycleId = cycleId
+
+    def load_roadwork(self):
+        works = get_roadworks()
+        for work in works:
+            record = work.find("./d2lm:situationRecord", NL_XML_NAMESPACES)
+            w_type = record.attrib['{{{ns}}}{key}'.format(ns=NL_XML_NAMESPACES['xsi'], key="type")]
+            if w_type != "MaintenanceWorks" and w_type != "ConstructionWorks":
+                continue
+            if not is_current(record):
+                continue
+            location = record.find("./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:locationForDisplay", NL_XML_NAMESPACES)
+            if location is None:
+                location = record.find("./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:pointByCoordinates/d2lm:pointCoordinates", NL_XML_NAMESPACES)
+            if location is None:
+                continue
+            created_at = work.find("./d2lm:situationVersionTime", NL_XML_NAMESPACES).text
+            descr = ""
+            if w_type == "MaintenanceWorks":
+                descr = record.find("./d2lm:roadMaintenanceType", NL_XML_NAMESPACES).text
+            elif w_type == "ConstructionWorks":
+                descr = record.find("./d2lm:constructionWorkType", NL_XML_NAMESPACES).text
+
+            Roadwork(refresh_cycle=self.CycleId,
+                     loc_latitude=location.find("./d2lm:latitude", NL_XML_NAMESPACES).text,
+                     loc_longitude=location.find("./d2lm:longitude", NL_XML_NAMESPACES).text,
+                     created_at=created_at,
+                     title=w_type,
+                     type=w_type,
+                     description=descr).save()
 
     def load_liveitems(self):
         liveitems = get_liveitems()
@@ -21,7 +51,7 @@ class NetherlandsImporter(BaseImporter):
             image_data = record.find("./d2lm:vmsMessageExtension/d2lm:vmsMessageExtension/d2lm:vmsImage/d2lm:imageData",
                                      NL_XML_NAMESPACES)
             img_binary = image_data.find("./d2lm:binary", NL_XML_NAMESPACES).text
-            if "X/////AAD//wAA/wAAAP8AAAAAAAAAAAAAAAAAAAA" in img_binary or "dBELJzDZygVJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBn7YahAADAGf8pB" in img_binary: #FILTER BLACK BOARD TODO: ML?
+            if "X/////AAD//wAA/wAAAP8AAAAAAAAAAAAAAAAAAAA" in img_binary or "dBELJzDZygVJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBn7YahAADAGf8pB" in img_binary:  # FILTER BLACK BOARD TODO: ML?
                 continue
             LiveItem(refresh_cycle=self.CycleId,
                      loc_latitude=boards[board_id]['lat'],
