@@ -14,19 +14,44 @@
                 console.log(data)
             }
         </script>
-        <div class="container">
-            <div><h1>Scores > 0.50 means the ML thinks the image is black / blank. Color coding for easier visualization: Green = Not blank; Red = Blank</h1></div>
-            <div class="row">
-                {% for d in data %}
-                    <div class="col"
-                         style="margin: 10px; padding: 10px; background-color: rgb({% if d.is_blank == True %} 255 {% else %} 0 {% endif %},{% if d.is_blank == False %} 255 {% else %} 0 {% endif %},0)">
-                        <img src="data:image/png;base64,{{ d.data }}">
-                        <b>ML Score: {{ d.score }}</b>
+        <div class="card text-center" style="margin: 30px">
+            <div class="card-header">
+                <div>
+                    <a type="button" class="btn btn-primary" href="/">Home</a>
+                    <h1>Machine Learning results</h1>
+                    <h4>Scores > 0.50 means the ML thinks the image is black / blank. Color coding for easier
+                        visualization: Green = Not blank; Red = Blank</h4>
+                </div>
+                <div>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            {% for cycle in cycleInfo.allowed_runs %}
+                                <li class="page-item {% if cycle == cycleInfo.current.id %}disabled{% endif %}"><a
+                                        class="page-link" href="/mlinfo/{{ cycle }}">Cycle
+                                    {{ cycle }}{% if cycle == cycleInfo.latest %} (Latest) {% endif %}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="card-body">
+                <h3>Data Fetched: {{ cycleInfo.current.end_time }}</h3>
+                <div class="container">
+                    <div class="row">
+                        {% for d in data %}
+                            <div class="col"
+                                 style="margin: 10px; padding: 10px; background-color: rgb({% if d.is_blank == True %} 255 {% else %} 0 {% endif %},{% if d.is_blank == False %} 255 {% else %} 0 {% endif %},0)">
+                                <img src="data:image/png;base64,{{ d.data }}">
+                                <p>
+                                    <b>ML Score: {{ d.score }}</b><br>
+                                    <b>ID: {{ d.id }}</b><br>
+                                </p>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-
+                </div>
+                {#        <button onclick="doPrint()">Export</button>#}
             </div>
         </div>
-        {#        <button onclick="doPrint()">Export</button>#}
     </div>
 {% endblock %}

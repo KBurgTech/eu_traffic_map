@@ -74,10 +74,16 @@
         </div>
     </div>
     <hr>
-    <div style="margin-bottom: 30px">
-        <a class="navMenuButton" href="/status">Data Information</a>
+    <div class="row">
+        <h5>Data collected at: {{ current_cycle.end_time }}</h5>
     </div>
-    <div style="margin-bottom: 30px">
-        <a class="navMenuButton" href="/mltrainer">Latest ML Results</a>
+    <hr>
+    <div class="row" style="padding-bottom: 15px">
+        <div class="col-md-auto">
+            <a class="navMenuButton" href="/status">Data Information</a>
+        </div>
+        <div class="col-md-auto">
+            <a class="navMenuButton" href="/mlinfo/{{ current_cycle.id }}">Latest ML Results</a>
+        </div>
     </div>
 </div>
