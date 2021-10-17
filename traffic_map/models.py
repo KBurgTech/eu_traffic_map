@@ -27,6 +27,13 @@ class LiveItem(models.Model):
     data = models.CharField(max_length=2048)
 
 
+class MLPrediction(models.Model):
+    refresh_cycle = models.IntegerField()
+    data = models.CharField(max_length=2048)
+    score = models.FloatField()
+    is_blank = models.BooleanField()
+
+
 class RoadAccident(models.Model):
     refresh_cycle = models.IntegerField()
     loc_latitude = models.FloatField()

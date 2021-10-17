@@ -1,0 +1,32 @@
+{% extends "Base.html" %}
+{% block content %}
+    <div>
+        <script>
+            function doPrint() {
+                data = []
+                for (let i = 1; i < 302; i++) {
+                    if ($("#ckb_" + i)[0].checked) {
+                        data.push(1)
+                    } else {
+                        data.push(0)
+                    }
+                }
+                console.log(data)
+            }
+        </script>
+        <div class="container">
+            <div><h1>Scores > 0.50 means the ML thinks the image is black / blank. Color coding for easier visualization: Green = Not blank; Red = Blank</h1></div>
+            <div class="row">
+                {% for d in data %}
+                    <div class="col"
+                         style="margin: 10px; padding: 10px; background-color: rgb({% if d.is_blank == True %} 255 {% else %} 0 {% endif %},{% if d.is_blank == False %} 255 {% else %} 0 {% endif %},0)">
+                        <img src="data:image/png;base64,{{ d.data }}">
+                        <b>ML Score: {{ d.score }}</b>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        {#        <button onclick="doPrint()">Export</button>#}
+    </div>
+{% endblock %}

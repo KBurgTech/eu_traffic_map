@@ -4,7 +4,9 @@ from traffic_map.importer.base_importer import BaseImporter
 from traffic_map.importer.nl.nl_accidents_importer import get_accidents, NL_XML_NAMESPACES
 from traffic_map.importer.nl.nl_liveitem_importer import get_liveitems, get_boards
 from traffic_map.importer.nl.nl_roadwork_importer import get_roadworks, is_current
-from traffic_map.models import RoadAccident, LiveItem, Roadwork
+from traffic_map.models import RoadAccident, LiveItem, Roadwork, MLPrediction
+from traffic_map.service import ml
+from traffic_map.service.ml import MODEL_PATH
 
 
 class NetherlandsImporter(BaseImporter):
@@ -20,9 +22,13 @@ class NetherlandsImporter(BaseImporter):
                 continue
             if not is_current(record):
                 continue
-            location = record.find("./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:locationForDisplay", NL_XML_NAMESPACES)
+            location = record.find(
+                "./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:locationForDisplay",
+                NL_XML_NAMESPACES)
             if location is None:
-                location = record.find("./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:pointByCoordinates/d2lm:pointCoordinates", NL_XML_NAMESPACES)
+                location = record.find(
+                    "./d2lm:groupOfLocations/d2lm:locationContainedInItinerary/d2lm:location/d2lm:pointByCoordinates/d2lm:pointCoordinates",
+                    NL_XML_NAMESPACES)
             if location is None:
                 continue
             created_at = work.find("./d2lm:situationVersionTime", NL_XML_NAMESPACES).text
@@ -43,6 +49,7 @@ class NetherlandsImporter(BaseImporter):
     def load_liveitems(self):
         liveitems = get_liveitems()
         boards = get_boards()
+        ml_model = ml.load_model(MODEL_PATH)
         for item in liveitems:
             record = item.find("./d2lm:vms/d2lm:vms/d2lm:vmsMessage/d2lm:vmsMessage", NL_XML_NAMESPACES)
             board_id = item.find("./d2lm:vmsUnitReference", NL_XML_NAMESPACES).attrib['id']
@@ -51,8 +58,12 @@ class NetherlandsImporter(BaseImporter):
             image_data = record.find("./d2lm:vmsMessageExtension/d2lm:vmsMessageExtension/d2lm:vmsImage/d2lm:imageData",
                                      NL_XML_NAMESPACES)
             img_binary = image_data.find("./d2lm:binary", NL_XML_NAMESPACES).text
-            if "X/////AAD//wAA/wAAAP8AAAAAAAAAAAAAAAAAAAA" in img_binary or "dBELJzDZygVJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBn7YahAADAGf8pB" in img_binary:  # FILTER BLACK BOARD TODO: ML?
+            ml_score = ml_model.predict([ml.get_predict_data(img_binary)])
+
+            MLPrediction(refresh_cycle=self.CycleId, data=img_binary, score=ml_score, is_blank=ml_score > 0.50).save()
+            if ml_score > 0.50:
                 continue
+
             LiveItem(refresh_cycle=self.CycleId,
                      loc_latitude=boards[board_id]['lat'],
                      loc_longitude=boards[board_id]['long'],
